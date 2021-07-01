@@ -1,8 +1,8 @@
+source 'https://github.com/CocoaPods/Specs.git'
+
 platform :ios, '12.0'
 use_frameworks!
 
-require_relative '../OpenTokSDKVersion'
-
 target 'Simple-Multiparty' do
-  pod 'OpenTok', OpenTokSDKVersion
+  pod 'OpenTok', '2.20.0'
 end
