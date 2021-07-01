@@ -4,5 +4,5 @@ platform :ios, '12.0'
 use_frameworks!
 
 target 'Simple-Multiparty' do
-  pod 'OpenTok', '2.20.0'
+  pod 'OpenTok', '2.16.3'
 end

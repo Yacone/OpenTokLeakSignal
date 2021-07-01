@@ -12,12 +12,12 @@ import OpenTok
 // *** Fill the following variables using your own Project info  ***
 // ***            https://tokbox.com/account/#/                  ***
 // Replace with your OpenTok API key
-let kApiKey = "47183664"
+let kApiKey = "47183674"
 // Replace with your generated session ID
-let kSessionId = "2_MX40NzE4MzY2NH5-MTYyNTA4MDE4MTA1MH4rdFUxSTZlS3lJSzhLS3VpcklqUU45b3J-fg"
+let kSessionId = "1_MX40NzE4MzY3NH5-MTYyNTE0MjU1NTQwMH4rUjhZN0drYkpWYjNJNUxyZmpHNXJEM2F-fg"
 // Replace with your generated token
-let kToken = "T1==cGFydG5lcl9pZD00NzE4MzY2NCZzaWc9MjU3YTlkNzZmMWE0NGQyNjVmZDAyNzEwZjdiMzUzN2NlZGUxNWRlNDpjb25uZWN0aW9uX2RhdGE9JTdCJTIyaWQlMjIlM0ElMjIxYjBiMTcxNS02YzQwLTRiNTItOWFkZS1iNTI3YzUyMzkzMjglMjIlMkMlMjJ1c2VySWQlMjIlM0ElMjI2MDk5NWZkNjJiZWZiNjUyYjQ5NzY4MGQlMjIlN0QmY3JlYXRlX3RpbWU9MTYyNTA4MDE4MSZleHBpcmVfdGltZT0xNjI1MDgxMDgxJmluaXRpYWxfbGF5b3V0X2NsYXNzX2xpc3Q9Jm5vbmNlPTAuNjQ1NDI1OTA1NDIwODE2OSZyb2xlPXB1Ymxpc2hlciZzZXNzaW9uX2lkPTJfTVg0ME56RTRNelkyTkg1LU1UWXlOVEE0TURFNE1UQTFNSDRyZEZVeFNUWmxTM2xKU3poTFMzVnBja2xxVVU0NWIzSi1mZw=="
-
+//let kToken = "T1==cGFydG5lcl9pZD00NzE4MzY3NCZzaWc9YjViMDNhMTc0ZmQyOTQ1MjMzYWI2MThmOTkwOTg2NTVkYjRjM2M0YTpzZXNzaW9uX2lkPTFfTVg0ME56RTRNelkzTkg1LU1UWXlOVEUwTWpVMU5UUXdNSDRyVWpoWk4wZHJZa3BXWWpOSk5VeHlabXBITlhKRU0yRi1mZyZjcmVhdGVfdGltZT0xNjI1MTQyNTk2Jm5vbmNlPTAuMjQ1NjQ2NjY2MDkwMTgwODImcm9sZT1wdWJsaXNoZXImZXhwaXJlX3RpbWU9MTYyNTE2NDE5NiZpbml0aWFsX2xheW91dF9jbGFzc19saXN0PQ=="
+let kToken = "T1==cGFydG5lcl9pZD00NzE4MzY3NCZzaWc9ZjExOTg5NWJmOWQ3YWZlYTIyYWU3YTdjNGMwOWEyYmY3NjNmNWNiYjpzZXNzaW9uX2lkPTFfTVg0ME56RTRNelkzTkg1LU1UWXlOVEUwTWpVMU5UUXdNSDRyVWpoWk4wZHJZa3BXWWpOSk5VeHlabXBITlhKRU0yRi1mZyZjcmVhdGVfdGltZT0xNjI1MTQyNjM4Jm5vbmNlPTAuNDM0MTc1MDMwOTc2MjgyODUmcm9sZT1wdWJsaXNoZXImZXhwaXJlX3RpbWU9MTYyNTE2NDIzNyZpbml0aWFsX2xheW91dF9jbGFzc19saXN0PQ=="
 class ViewController: UIViewController {
 
     @IBOutlet var endCallButton: UIButton!
@@ -33,7 +33,9 @@ class ViewController: UIViewController {
     lazy var publisher: OTPublisher = {
         let settings = OTPublisherSettings()
         settings.name = UIDevice.current.name
-        return OTPublisher(delegate: self, settings: settings)!
+        let publish = OTPublisher(delegate: self, settings: settings)!
+        publish.audioLevelDelegate = self
+        return publish
     }()
     var error: OTError?
     
@@ -170,6 +172,7 @@ extension ViewController {
     
     func doSubscribe(to stream: OTStream) {
         if let subscriber = OTSubscriber(stream: stream, delegate: self) {
+            subscriber.audioLevelDelegate = self
             let indexPath = IndexPath(item: subscribers.count, section: 0)
             subscribers[indexPath] = subscriber
             session.subscribe(subscriber, error: &error)
@@ -252,6 +255,12 @@ extension ViewController: OTPublisherDelegate {
     }
 }
 
+extension ViewController: OTPublisherKitAudioLevelDelegate {
+    func publisher(_ publisher: OTPublisherKit, audioLevelUpdated audioLevel: Float) {
+        print("Its me mario \(publisher.session?.connection?.data)")
+    }
+}
+
 // MARK: - OTSubscriber delegate callbacks
 extension ViewController: OTSubscriberDelegate {
     func subscriberDidConnect(toStream subscriberKit: OTSubscriberKit) {
@@ -267,3 +276,8 @@ extension ViewController: OTSubscriberDelegate {
     }
 }
 
+extension ViewController: OTSubscriberKitAudioLevelDelegate {
+    func subscriber(_ subscriber: OTSubscriberKit, audioLevelUpdated audioLevel: Float) {
+        print("Its me luigi \(subscriber.session.connection?.data)")
+    }
+}
